@@ -33,4 +33,60 @@ class ImageRepositoryTest {
         assertEquals(retrievedImage.getHash(), image.getHash());
     }
 
+    @Test
+    public void testGetImage() {
+        Image image = new Image(1L,
+                "sunset",
+                "jpeg",
+                100_000L,
+                "hash",
+                ImageUtility.compressImage(new byte[]{8}));
+
+        imageRepository.save(image);
+        Image retrievedImage = imageRepository.findByName("sunset")
+                .orElseThrow(ImageRepositoryException::new);
+        assertNotNull(image);
+        assertEquals(retrievedImage.getName(), image.getName());
+        assertEquals(retrievedImage.getHash(), image.getHash());
+    }
+
+    @Test
+    public void testDeleteImage() {
+        Image image = new Image(1L,
+                "sunset",
+                "jpeg",
+                100_000L,
+                "hash",
+                ImageUtility.compressImage(new byte[]{8}));
+
+        imageRepository.save(image);
+        imageRepository.delete(image);
+    }
+
+    @Test
+    public void findAllImages() {
+        Image image = new Image(1L,
+                "sunset",
+                "jpeg",
+                100_000L,
+                "hash",
+                ImageUtility.compressImage(new byte[]{8}));
+
+        imageRepository.save(image);
+        assertNotNull(imageRepository.findAll());
+    }
+
+    @Test
+    public void deleteByImageIdTest() {
+        Image image = new Image(1L,
+                "sunset",
+                "jpeg",
+                100_000L,
+                "hash",
+                ImageUtility.compressImage(new byte[]{8}));
+
+        Image temp = imageRepository.save(image);
+        imageRepository.deleteById(temp.getId());
+    }
+
 }

@@ -1,5 +1,8 @@
 package com.service.image.util;
 
+import com.service.image.exception.ImageCompressionException;
+import com.service.image.exception.ImageDecompressionException;
+
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -20,7 +23,8 @@ public class ImageUtility {
                 outputStream.write(temp, 0, size);
                 outputStream.close();
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            throw new ImageCompressionException();
         }
         return outputStream.toByteArray();
     }
@@ -36,7 +40,8 @@ public class ImageUtility {
                 outputStream.write(temp, 0, count);
             }
             outputStream.close();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            throw new ImageDecompressionException();
         }
         return outputStream.toByteArray();
     }

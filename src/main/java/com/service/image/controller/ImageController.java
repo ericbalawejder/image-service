@@ -2,6 +2,7 @@ package com.service.image.controller;
 
 import com.service.image.entities.Image;
 import com.service.image.exception.ImageRepositoryException;
+import com.service.image.exception.ImageSizeException;
 import com.service.image.repositories.ImageRepository;
 import com.service.image.response.ImageUploadResponse;
 import com.service.image.util.ImageUtility;
@@ -29,6 +30,8 @@ public class ImageController {
     @PostMapping("/upload/image")
     public ResponseEntity<ImageUploadResponse> uploadImage(@RequestParam("image") MultipartFile multipartFile)
             throws IOException {
+
+        if (multipartFile.getSize() > 100_000_000L) throw new ImageSizeException();
 
         final Image image = new Image(multipartFile.getOriginalFilename(),
                 multipartFile.getContentType(),

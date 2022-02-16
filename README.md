@@ -32,6 +32,24 @@ Get request for image:
 Get request for image info:
 ![get-image-info](/assets/image-service-get-info.png)
 
+### Database schema
+Spring Data JPA sets up the table defined by the entity class `Image`. The database connection is configured
+in the `application.properties` file.
+```
+mysql> desc image;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | bigint       | NO   | PRI | NULL    |       |
+| hash  | varchar(255) | YES  |     | NULL    |       |
+| image | mediumblob   | NO   |     | NULL    |       |
+| name  | varchar(255) | YES  |     | NULL    |       |
+| size  | bigint       | YES  |     | NULL    |       |
+| type  | varchar(255) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+```
+
 ### Issues
 When testing using `@DataJpaTest` with `com.h2database:h2:2.1.210`, the generation type
 `@GeneratedValue(strategy = GenerationType.IDENTITY)` for `Image` Id field throws:

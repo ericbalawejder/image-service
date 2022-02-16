@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -87,6 +89,20 @@ class ImageRepositoryTest {
 
         Image temp = imageRepository.save(image);
         imageRepository.deleteById(temp.getId());
+    }
+
+    @Test
+    public void findImageByHashTest() {
+        Image image = new Image(1L,
+                "sunset",
+                "jpeg",
+                100_000L,
+                "3kYUMK1Kx3EkNLzjHKI+R53O0GbmeXJ8buCGbKuTuMY=",
+                ImageUtility.compressImage(new byte[]{8}));
+
+        imageRepository.save(image);
+        Optional<Image> temp = imageRepository.findByHash("3kYUMK1Kx3EkNLzjHKI+R53O0GbmeXJ8buCGbKuTuMY=");
+        assertEquals(image.getHash(), temp.orElseThrow().getHash());
     }
 
 }

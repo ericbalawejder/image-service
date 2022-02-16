@@ -3,6 +3,7 @@ package com.service.image.controller;
 import com.service.image.entities.Image;
 import com.service.image.exception.ImageRepositoryException;
 import com.service.image.exception.ImageSizeException;
+import com.service.image.hash.Hash;
 import com.service.image.repositories.ImageRepository;
 import com.service.image.response.ImageUploadResponse;
 import com.service.image.util.ImageUtility;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin()
@@ -29,14 +32,22 @@ public class ImageController {
 
     @PostMapping("/upload/image")
     public ResponseEntity<ImageUploadResponse> uploadImage(@RequestParam("image") MultipartFile multipartFile)
-            throws IOException {
+            throws IOException, NoSuchAlgorithmException {
 
         if (multipartFile.getSize() > 100_000_000L) throw new ImageSizeException();
 
+        final String hash = Hash.encodeFileBase64(multipartFile);
+        final Optional<Image> imageHash = imageRepository.findByHash(hash);
+
+        if (imageHash.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ImageUploadResponse("Image is already on file: " +
+                            multipartFile.getOriginalFilename()));
+        }
         final Image image = new Image(multipartFile.getOriginalFilename(),
                 multipartFile.getContentType(),
                 multipartFile.getSize(),
-                "create hash",
+                hash,
                 ImageUtility.compressImage(multipartFile.getBytes()));
 
         imageRepository.save(image);

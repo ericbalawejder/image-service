@@ -1,5 +1,6 @@
 package com.service.image.controller;
 
+import com.service.image.exception.FileHashException;
 import com.service.image.exception.ImageCompressionException;
 import com.service.image.exception.ImageDecompressionException;
 import com.service.image.exception.ImageRepositoryException;
@@ -25,6 +26,14 @@ public class ImageExceptionHandler {
     public ResponseEntity<ImageErrorResponse> handleImageSizeException(ImageSizeException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.PAYLOAD_TOO_LARGE.value(), exc.getMessage(), System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ImageErrorResponse> handleFileHashException(FileHashException exc) {
+        final ImageErrorResponse error = new ImageErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(), exc.getMessage(), System.currentTimeMillis());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

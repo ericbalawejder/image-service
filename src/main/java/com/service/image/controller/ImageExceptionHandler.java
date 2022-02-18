@@ -1,6 +1,5 @@
 package com.service.image.controller;
 
-import com.service.image.exception.FileHashException;
 import com.service.image.exception.ImageCompressionException;
 import com.service.image.exception.ImageDecompressionException;
 import com.service.image.exception.ImageRepositoryException;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 @ControllerAdvice
@@ -33,7 +33,7 @@ public class ImageExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ImageErrorResponse> handleFileHashException(FileHashException exc) {
+    public ResponseEntity<ImageErrorResponse> handleNoSuchAlgorithmException(NoSuchAlgorithmException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 

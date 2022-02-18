@@ -1,4 +1,6 @@
 package com.service.image.response;
 
-public record ImageErrorResponse(int status, String message, long timeStamp) {
+import org.springframework.http.HttpStatus;
+
+public record ImageErrorResponse(HttpStatus status, String message, long timeStamp) {
 }

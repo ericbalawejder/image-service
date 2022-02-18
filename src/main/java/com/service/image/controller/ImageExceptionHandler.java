@@ -17,50 +17,50 @@ public class ImageExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleImageRepositoryException(ImageRepositoryException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.NO_CONTENT.value(), exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.NO_CONTENT, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, error.status());
     }
 
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleImageSizeException(ImageSizeException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.PAYLOAD_TOO_LARGE.value(), exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.PAYLOAD_TOO_LARGE, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, error.status());
     }
 
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleFileHashException(FileHashException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(), exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, error.status());
     }
 
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleCompressionException(ImageCompressionException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(), exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, error.status());
     }
 
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleDecompressionException(ImageDecompressionException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(), exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, error.status());
     }
 
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleAll(Exception exc) {
         final String message = "¯\\_(ツ)_/¯";
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.BAD_REQUEST.value(), message, System.currentTimeMillis());
+                HttpStatus.BAD_REQUEST, message, System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, error.status());
     }
 
 }

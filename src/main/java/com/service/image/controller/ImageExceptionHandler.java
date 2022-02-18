@@ -11,13 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @ControllerAdvice
 public class ImageExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleImageRepositoryException(ImageRepositoryException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.NO_CONTENT, exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.BAD_REQUEST, exc.getMessage(), System.currentTimeMillis());
 
         return new ResponseEntity<>(error, error.status());
     }
@@ -50,6 +52,15 @@ public class ImageExceptionHandler {
     public ResponseEntity<ImageErrorResponse> handleDecompressionException(ImageDecompressionException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, error.status());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ImageErrorResponse> handleDuplicateImageUpload(
+            SQLIntegrityConstraintViolationException exc) {
+        final ImageErrorResponse error = new ImageErrorResponse(
+                HttpStatus.BAD_REQUEST, "image is already on file", System.currentTimeMillis());
 
         return new ResponseEntity<>(error, error.status());
     }

@@ -16,7 +16,6 @@ public class Image {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -28,7 +27,7 @@ public class Image {
     @Column(name = "size")
     private Long size;
 
-    @Column(name = "hash")
+    @Column(name = "hash", nullable = false, unique = true, length = 44)
     private String hash;
 
     @Column(name = "image", nullable = false, length = 100_000)
@@ -83,11 +82,11 @@ public class Image {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Image image1 = (Image) o;
-        return Objects.equals(id, image1.id) &&
+        return id.equals(image1.id) &&
                 Objects.equals(name, image1.name) &&
                 Objects.equals(type, image1.type) &&
                 Objects.equals(size, image1.size) &&
-                Objects.equals(hash, image1.hash) &&
+                hash.equals(image1.hash) &&
                 Arrays.equals(image, image1.image);
     }
 

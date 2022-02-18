@@ -21,14 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin()
 public class ImageController {
 
     @Autowired
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     @PostMapping("/upload/image")
     public ResponseEntity<ImageUploadResponse> uploadImage(@RequestParam("image") MultipartFile multipartFile)
@@ -36,18 +35,10 @@ public class ImageController {
 
         if (multipartFile.getSize() > 100_000_000L) throw new ImageSizeException();
 
-        final String hash = Hash.encodeFileBase64(multipartFile);
-        final Optional<Image> imageHash = imageRepository.findByHash(hash);
-
-        if (imageHash.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ImageUploadResponse("Image is already on file: " +
-                            multipartFile.getOriginalFilename()));
-        }
         final Image image = new Image(multipartFile.getOriginalFilename(),
                 multipartFile.getContentType(),
                 multipartFile.getSize(),
-                hash,
+                Hash.encodeFileBase64(multipartFile),
                 ImageUtility.compressImage(multipartFile.getBytes()));
 
         imageRepository.save(image);
@@ -75,8 +66,7 @@ public class ImageController {
         final Image image = imageRepository.findByName(name)
                 .orElseThrow(ImageRepositoryException::new);
 
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(image.getType()))
                 .body(ImageUtility.decompressImage(image.getImage()));
     }

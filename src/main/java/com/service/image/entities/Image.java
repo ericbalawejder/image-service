@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,7 +31,8 @@ public class Image {
     @Column(name = "hash", nullable = false, unique = true, length = 44)
     private String hash;
 
-    @Column(name = "image", nullable = false, length = 100_000)
+    @Lob
+    @Column(name = "image", columnDefinition="mediumblob", nullable = false)
     private byte[] image;
 
     protected Image() {

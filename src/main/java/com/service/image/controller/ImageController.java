@@ -1,6 +1,7 @@
 package com.service.image.controller;
 
 import com.service.image.entities.Image;
+import com.service.image.exception.DuplicateImageException;
 import com.service.image.exception.ImageRepositoryException;
 import com.service.image.exception.ImageSizeException;
 import com.service.image.hash.Hash;
@@ -31,7 +32,7 @@ public class ImageController {
 
     @PostMapping("/upload/image")
     public ResponseEntity<ImageUploadResponse> uploadImage(@RequestParam("image") MultipartFile multipartFile)
-            throws IOException, NoSuchAlgorithmException {
+            throws IOException, NoSuchAlgorithmException, DuplicateImageException {
 
         if (multipartFile.getSize() > 100_000_000L) throw new ImageSizeException();
 
@@ -41,8 +42,11 @@ public class ImageController {
                 Hash.encodeFileBase64(multipartFile),
                 ImageUtility.compressImage(multipartFile.getBytes()));
 
-        imageRepository.save(image);
-
+        try {
+            imageRepository.save(image);
+        } catch (Exception e) {
+            throw new DuplicateImageException();
+        }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ImageUploadResponse("Image uploaded successfully: " +
                         multipartFile.getOriginalFilename()));

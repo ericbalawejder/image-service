@@ -1,5 +1,6 @@
 package com.service.image.controller;
 
+import com.service.image.exception.DuplicateImageException;
 import com.service.image.exception.ImageCompressionException;
 import com.service.image.exception.ImageDecompressionException;
 import com.service.image.exception.ImageRepositoryException;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @ControllerAdvice
 public class ImageExceptionHandler {
@@ -57,10 +57,9 @@ public class ImageExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ImageErrorResponse> handleDuplicateImageUpload(
-            SQLIntegrityConstraintViolationException exc) {
+    public ResponseEntity<ImageErrorResponse> handleDuplicateImageException(DuplicateImageException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.BAD_REQUEST, "image is already on file", System.currentTimeMillis());
+                HttpStatus.BAD_REQUEST, exc.getMessage(), System.currentTimeMillis());
 
         return new ResponseEntity<>(error, error.status());
     }

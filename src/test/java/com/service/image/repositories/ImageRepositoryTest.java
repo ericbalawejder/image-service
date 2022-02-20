@@ -1,15 +1,16 @@
 package com.service.image.repositories;
 
 import com.service.image.entities.Image;
-import com.service.image.exception.ImageRepositoryException;
 import com.service.image.util.ImageUtility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
@@ -18,91 +19,65 @@ class ImageRepositoryTest {
     @Autowired
     private ImageRepository imageRepository;
 
+    private Image sunset;
+
+    @BeforeEach
+    public void setup() {
+        sunset = new Image(1L,
+                "sunset.jpeg",
+                "jpeg",
+                100_000L,
+                "hash",
+                ImageUtility.compressImage(new byte[]{127}));
+    }
+
     @Test
     public void testSaveImage() {
-        Image image = new Image(1L,
-                "sunset",
-                "jpeg",
-                100_000L,
-                "hash",
-                ImageUtility.compressImage(new byte[]{8}));
+        final Image savedImage = imageRepository.save(sunset);
 
-        imageRepository.save(image);
-        Image retrievedImage = imageRepository.findByName("sunset")
-                .orElseThrow(ImageRepositoryException::new);
-        assertNotNull(image);
-        assertEquals(retrievedImage.getName(), image.getName());
-        assertEquals(retrievedImage.getHash(), image.getHash());
+        assertNotNull(savedImage);
+        assertThat(savedImage.getId()).isGreaterThan(0);
     }
 
     @Test
-    public void testGetImage() {
-        Image image = new Image(1L,
-                "sunset",
-                "jpeg",
-                100_000L,
-                "hash",
-                ImageUtility.compressImage(new byte[]{8}));
+    public void testGetImageByName() {
+        imageRepository.save(sunset);
+        final Optional<Image> imageDB = imageRepository.findByName("sunset.jpeg");
 
-        imageRepository.save(image);
-        Image retrievedImage = imageRepository.findByName("sunset")
-                .orElseThrow(ImageRepositoryException::new);
-        assertNotNull(image);
-        assertEquals(retrievedImage.getName(), image.getName());
-        assertEquals(retrievedImage.getHash(), image.getHash());
-    }
-
-    @Test
-    public void testDeleteImage() {
-        Image image = new Image(1L,
-                "sunset",
-                "jpeg",
-                100_000L,
-                "hash",
-                ImageUtility.compressImage(new byte[]{8}));
-
-        imageRepository.save(image);
-        imageRepository.delete(image);
+        assertThat(imageDB).isPresent();
     }
 
     @Test
     public void findAllImages() {
-        Image image = new Image(1L,
-                "sunset",
+        final Image sky = new Image(2L,
+                "sky.jpeg",
                 "jpeg",
-                100_000L,
-                "hash",
-                ImageUtility.compressImage(new byte[]{8}));
+                200_000L,
+                "skyhash",
+                ImageUtility.compressImage(new byte[]{127}));
 
-        imageRepository.save(image);
-        assertNotNull(imageRepository.findAll());
+        final Image skull = new Image(3L,
+                "skull.jpeg",
+                "jpeg",
+                300_000L,
+                "skullhash",
+                ImageUtility.compressImage(new byte[]{127}));
+
+        imageRepository.save(sky);
+        imageRepository.save(skull);
+        final List<Image> images = imageRepository.findAll();
+
+        assertNotNull(images);
+        assertThat(images.size()).isEqualTo(2);
     }
 
     @Test
-    public void deleteByImageIdTest() {
-        Image image = new Image(1L,
-                "sunset",
-                "jpeg",
-                100_000L,
-                "hash",
-                ImageUtility.compressImage(new byte[]{8}));
+    public void testDeleteImageByName() {
+        imageRepository.save(sunset);
+        imageRepository.deleteById(sunset.getId());
+        final Optional<Image> image = imageRepository.findByName(sunset.getName());
 
-        Image temp = imageRepository.save(image);
-        imageRepository.deleteById(temp.getId());
-    }
-
-    @Test
-    public void findImageByHashTest() {
-        Image image = new Image(1L,
-                "sunset",
-                "jpeg",
-                100_000L,
-                "3kYUMK1Kx3EkNLzjHKI+R53O0GbmeXJ8buCGbKuTuMY=",
-                ImageUtility.compressImage(new byte[]{8}));
-
-        imageRepository.save(image);
-        Optional<Image> temp = imageRepository.findByHash("3kYUMK1Kx3EkNLzjHKI+R53O0GbmeXJ8buCGbKuTuMY=");
-        assertEquals(image.getHash(), temp.orElseThrow().getHash());
+        assertThat(image).isEmpty();
     }
 
 }

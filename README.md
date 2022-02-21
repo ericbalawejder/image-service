@@ -7,13 +7,13 @@
 * Show image details at `/get/image/info/{name}`
 
 ### To run
-```shell
-$ ./gradlew clean build
+```
+$ ./gradlew clean build -x test
 $ ./gradlew bootRun
 ```
 
 To run the tests:
-```shell
+```
 $ ./gradlew test
 ```
 
@@ -30,7 +30,7 @@ Get request for image info:
 ### Database schema
 Spring Data JPA sets up the table defined by the entity class `Image`. The database connection is configured
 in the `application.properties` file.
-```
+```mysql
 mysql> desc image;
 +-------+--------------+------+-----+---------+-------+
 | Field | Type         | Null | Key | Default | Extra |

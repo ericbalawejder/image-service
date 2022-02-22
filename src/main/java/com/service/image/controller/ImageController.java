@@ -6,6 +6,7 @@ import com.service.image.exception.ImageRepositoryException;
 import com.service.image.exception.ImageSizeException;
 import com.service.image.hash.Hash;
 import com.service.image.repositories.ImageRepository;
+import com.service.image.response.ImageResponse;
 import com.service.image.response.ImageUploadResponse;
 import com.service.image.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,6 +75,20 @@ public class ImageController {
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(image.getType()))
                 .body(ImageUtility.decompressImage(image.getImage()));
+    }
+
+    @DeleteMapping(path = {"/delete/image/{name}"})
+    public ResponseEntity<ImageResponse> deleteImage(@PathVariable("name") String name) {
+        final Image image = imageRepository.findByName(name)
+                .orElseThrow(ImageRepositoryException::new);
+
+        imageRepository.delete(image);
+
+        final ImageResponse imageResponse = new ImageResponse(
+                "Image " + image.getName() + " deleted successfully.");
+
+        return ResponseEntity.ok()
+                .body(imageResponse);
     }
 
 }

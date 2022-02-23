@@ -55,16 +55,12 @@ public class ImageController {
     }
 
     @GetMapping(path = {"/get/image/info/{name}"})
-    public Image getImageDetails(@PathVariable("name") String name) {
+    public ResponseEntity<Image> getImageDetails(@PathVariable("name") String name) {
         final Image image = imageRepository.findByName(name)
                 .orElseThrow(ImageRepositoryException::new);
 
-        return new Image(image.getId(),
-                image.getName(),
-                image.getType(),
-                image.getSize(),
-                image.getHash(),
-                ImageUtility.decompressImage(image.getImage()));
+        return ResponseEntity.ok()
+                .body(image);
     }
 
     @GetMapping(path = {"/get/image/{name}"})

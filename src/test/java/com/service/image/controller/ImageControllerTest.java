@@ -66,7 +66,8 @@ public class ImageControllerTest {
 
     @Test
     public void givenImageGetImageDetails() throws Exception {
-        given(imageController.getImageDetails("sky.jpeg")).willReturn(image);
+        given(imageController.getImageDetails("sky.jpeg"))
+                .willReturn(ResponseEntity.ok().body(image));
 
         final MvcResult mvcResult = mockMvc.perform(get("/get/image/info/" + image.getName()))
                 .andExpect(status().isOk())

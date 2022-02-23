@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -145,11 +146,36 @@ public class ImageControllerTest {
         System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
-    /*
     @Test
-    public void givenImageByNameDeleteImageAndReturn() {
+    public void givenImageByNameDeleteImageAndReturn() throws Exception {
+        final ResponseEntity<ImageResponse> responseEntity = ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ImageResponse("Image " + image.getName() + " deleted successfully"));
 
+        given(imageController.deleteImage("sky.jpeg")).willReturn(responseEntity);
+
+        final MvcResult mvcResult = mockMvc.perform(delete("/delete/image/" + image.getName()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.response",
+                        Is.is("Image " + image.getName() + " deleted successfully")))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
-     */
+
+    @Test
+    public void givenImageByNameNotFoundReturnImageErrorResponse() throws Exception {
+        given(imageController.deleteImage("not-found.jpeg"))
+                .willThrow(new ImageRepositoryException());
+
+        final MvcResult mvcResult = mockMvc.perform(delete("/delete/image/not-found.jpeg"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", Is.is("file name not found")))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
 
 }

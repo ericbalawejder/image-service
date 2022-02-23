@@ -7,10 +7,8 @@ import com.service.image.exception.ImageSizeException;
 import com.service.image.hash.Hash;
 import com.service.image.repositories.ImageRepository;
 import com.service.image.response.ImageResponse;
-import com.service.image.response.ImageUploadResponse;
 import com.service.image.util.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,7 +31,7 @@ public class ImageController {
     private ImageRepository imageRepository;
 
     @PostMapping("/upload/image")
-    public ResponseEntity<ImageUploadResponse> uploadImage(@RequestParam("image") MultipartFile multipartFile)
+    public ResponseEntity<ImageResponse> uploadImage(@RequestParam("image") MultipartFile multipartFile)
             throws IOException, NoSuchAlgorithmException, DuplicateImageException {
 
         if (multipartFile.getSize() > 100_000_000L) throw new ImageSizeException();
@@ -49,9 +47,11 @@ public class ImageController {
         } catch (Exception e) {
             throw new DuplicateImageException();
         }
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ImageUploadResponse("Image uploaded successfully: " +
-                        multipartFile.getOriginalFilename()));
+        final ImageResponse imageResponse = new ImageResponse(
+                "Image " + multipartFile.getOriginalFilename() + " uploaded successfully");
+
+        return ResponseEntity.ok()
+                .body(imageResponse);
     }
 
     @GetMapping(path = {"/get/image/info/{name}"})

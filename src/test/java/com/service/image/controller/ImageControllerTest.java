@@ -1,7 +1,7 @@
 package com.service.image.controller;
 
 import com.service.image.entities.Image;
-import com.service.image.response.ImageUploadResponse;
+import com.service.image.response.ImageResponse;
 import com.service.image.util.ImageUtility;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,11 +49,11 @@ public class ImageControllerTest {
     public void whenUploadingImageThenReturnResponse() throws Exception {
         final MockMultipartFile imageFile = new MockMultipartFile("image", new byte[]{127});
 
-        final ResponseEntity<ImageUploadResponse> imageUploadResponse = ResponseEntity
+        final ResponseEntity<ImageResponse> imageResponse = ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ImageUploadResponse("Image uploaded successfully: " + image.getName()));
+                .body(new ImageResponse("Image uploaded successfully: " + image.getName()));
 
-        when(imageController.uploadImage(imageFile)).thenReturn(imageUploadResponse);
+        when(imageController.uploadImage(imageFile)).thenReturn(imageResponse);
 
         final MvcResult mvcResult = mockMvc.perform(multipart("/upload/image")
                         .file(imageFile)

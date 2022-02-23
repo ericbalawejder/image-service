@@ -21,7 +21,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.BAD_REQUEST, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
     @ExceptionHandler
@@ -29,7 +29,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.PAYLOAD_TOO_LARGE, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
     @ExceptionHandler
@@ -37,7 +37,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
     @ExceptionHandler
@@ -45,7 +45,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
     @ExceptionHandler
@@ -53,7 +53,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
     @ExceptionHandler
@@ -61,7 +61,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.BAD_REQUEST, exc.getMessage(), System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
     @ExceptionHandler
@@ -70,7 +70,7 @@ public class ImageExceptionHandler {
         final ImageErrorResponse error = new ImageErrorResponse(
                 HttpStatus.BAD_REQUEST, message, System.currentTimeMillis());
 
-        return new ResponseEntity<>(error, error.status());
+        return new ResponseEntity<>(error, error.httpStatus());
     }
 
 }

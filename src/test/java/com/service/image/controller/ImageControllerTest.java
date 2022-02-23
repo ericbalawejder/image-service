@@ -1,6 +1,8 @@
 package com.service.image.controller;
 
 import com.service.image.entities.Image;
+import com.service.image.exception.DuplicateImageException;
+import com.service.image.exception.ImageRepositoryException;
 import com.service.image.response.ImageResponse;
 import com.service.image.util.ImageUtility;
 import org.hamcrest.core.Is;
@@ -65,6 +67,22 @@ public class ImageControllerTest {
     }
 
     @Test
+    public void whenUploadingDuplicateImageThenReturnImageErrorResponse() throws Exception {
+        final MockMultipartFile imageFile = new MockMultipartFile("image", new byte[]{127});
+
+        when(imageController.uploadImage(imageFile)).thenThrow(new DuplicateImageException());
+
+        final MvcResult mvcResult = mockMvc.perform(multipart("/upload/image")
+                        .file(imageFile)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message", Is.is("image is already on file")))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
     public void givenImageGetImageDetails() throws Exception {
         given(imageController.getImageDetails("sky.jpeg"))
                 .willReturn(ResponseEntity.ok().body(image));
@@ -81,5 +99,57 @@ public class ImageControllerTest {
 
         System.out.println(mvcResult.getResponse().getContentAsString());
     }
+
+    @Test
+    public void givenImageDetailsNotFoundThenReturnImageErrorResponse() throws Exception {
+        given(imageController.getImageDetails("not-found.jpeg"))
+                .willThrow(new ImageRepositoryException());
+
+        final MvcResult mvcResult = mockMvc.perform(get("/get/image/info/not-found.jpeg"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", Is.is("file name not found")))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void givenImageThenReturnImage() throws Exception {
+        final ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(ImageUtility.decompressImage(image.getImage()));
+
+        given(imageController.getImage("sky.jpeg")).willReturn(responseEntity);
+
+        final MvcResult mvcResult = mockMvc.perform(get("/get/image/" + image.getName()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().bytes(ImageUtility.decompressImage(image.getImage())))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void givenImageNotFoundThenReturnImageErrorResponse() throws Exception {
+        given(imageController.getImage("not-found.jpeg"))
+                .willThrow(new ImageRepositoryException());
+
+        final MvcResult mvcResult = mockMvc.perform(get("/get/image/not-found.jpeg"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", Is.is("file name not found")))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    /*
+    @Test
+    public void givenImageByNameDeleteImageAndReturn() {
+
+    }
+     */
 
 }

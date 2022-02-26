@@ -6,13 +6,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ActiveProfiles("test")
 @DataJpaTest
 class ImageRepositoryTest {
 
@@ -22,33 +25,33 @@ class ImageRepositoryTest {
     private Image sunset;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         sunset = new Image(1L,
                 "sunset.jpeg",
                 "jpeg",
                 100_000L,
-                "hash",
+                generateRandomString(44),
                 ImageUtility.compressImage(new byte[]{127}));
     }
 
     @Test
-    public void testSaveImage() {
-        final Image savedImage = imageRepository.save(sunset);
+    void testSaveImage() {
+        final Image actual = imageRepository.save(sunset);
 
-        assertNotNull(savedImage);
-        assertThat(savedImage.getId()).isGreaterThan(0);
+        assertNotNull(actual);
+        assertThat(actual.getId()).isPositive();
     }
 
     @Test
-    public void testGetImageByName() {
+    void testGetImageByName() {
         imageRepository.save(sunset);
-        final Optional<Image> imageDB = imageRepository.findByName("sunset.jpeg");
+        final Optional<Image> actual = imageRepository.findByName("sunset.jpeg");
 
-        assertThat(imageDB).isPresent();
+        assertThat(actual).isPresent();
     }
 
     @Test
-    public void findAllImages() {
+    void findAllImages() {
         final Image sky = new Image(2L,
                 "sky.jpeg",
                 "jpeg",
@@ -65,19 +68,27 @@ class ImageRepositoryTest {
 
         imageRepository.save(sky);
         imageRepository.save(skull);
-        final List<Image> images = imageRepository.findAll();
+        final List<Image> actual = imageRepository.findAll();
+        final int expected = 2;
 
-        assertNotNull(images);
-        assertThat(images.size()).isEqualTo(2);
+        assertNotNull(actual);
+        assertThat(actual.size()).isEqualTo(expected);
     }
 
     @Test
-    public void testDeleteImageByName() {
+    void testDeleteImageByName() {
         imageRepository.save(sunset);
         imageRepository.deleteById(sunset.getId());
-        final Optional<Image> image = imageRepository.findByName(sunset.getName());
+        final Optional<Image> actual = imageRepository.findByName(sunset.getName());
 
-        assertThat(image).isEmpty();
+        assertThat(actual).isEmpty();
+    }
+
+    private static String generateRandomString(int length) {
+        return new SecureRandom().ints(length, 33, 127)
+                .mapToObj(i -> (char) i)
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 
 }

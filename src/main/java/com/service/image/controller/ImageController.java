@@ -70,7 +70,7 @@ public class ImageController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(image.getType()))
-                .body(ImageUtility.decompressImage(image.getImage()));
+                .body(ImageUtility.decompressImage(image.getPhoto()));
     }
 
     @DeleteMapping(path = {"/delete/image/{name}"})

@@ -119,14 +119,14 @@ public class ImageControllerTest {
     public void givenImageThenReturnImage() throws Exception {
         final ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(ImageUtility.decompressImage(image.getImage()));
+                .body(ImageUtility.decompressImage(image.getPhoto()));
 
         given(imageController.getImage("sky.jpeg")).willReturn(responseEntity);
 
         final MvcResult mvcResult = mockMvc.perform(get("/get/image/" + image.getName()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_JPEG))
-                .andExpect(content().bytes(ImageUtility.decompressImage(image.getImage())))
+                .andExpect(content().bytes(ImageUtility.decompressImage(image.getPhoto())))
                 .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());

@@ -16,7 +16,7 @@ public class Image {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -32,27 +32,27 @@ public class Image {
     private String hash;
 
     @Lob
-    @Column(name = "image", columnDefinition="mediumblob", nullable = false)
-    private byte[] image;
+    @Column(name = "photo", columnDefinition="mediumblob", nullable = false)
+    private byte[] photo;
 
     protected Image() {
     }
 
-    public Image(String name, String type, Long size, String hash, byte[] image) {
+    public Image(String name, String type, Long size, String hash, byte[] photo) {
         this.name = name;
         this.type = type;
         this.size = size;
         this.hash = hash;
-        this.image = image;
+        this.photo = photo;
     }
 
-    public Image(Long id, String name, String type, Long size, String hash, byte[] image) {
+    public Image(Long id, String name, String type, Long size, String hash, byte[] photo) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.size = size;
         this.hash = hash;
-        this.image = image;
+        this.photo = photo;
     }
 
     public Long getId() {
@@ -75,8 +75,8 @@ public class Image {
         return hash;
     }
 
-    public byte[] getImage() {
-        return image;
+    public byte[] getPhoto() {
+        return photo;
     }
 
     @Override
@@ -89,13 +89,13 @@ public class Image {
                 Objects.equals(type, image1.type) &&
                 Objects.equals(size, image1.size) &&
                 hash.equals(image1.hash) &&
-                Arrays.equals(image, image1.image);
+                Arrays.equals(photo, image1.photo);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(id, name, type, size, hash);
-        result = 31 * result + Arrays.hashCode(image);
+        result = 31 * result + Arrays.hashCode(photo);
         return result;
     }
 
@@ -107,7 +107,7 @@ public class Image {
                 ", type='" + type + '\'' +
                 ", size=" + size +
                 ", hash='" + hash + '\'' +
-                ", image=" + Arrays.toString(image) +
+                ", image=" + Arrays.toString(photo) +
                 '}';
     }
 

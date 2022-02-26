@@ -18,6 +18,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.security.SecureRandom;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -28,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ImageController.class)
-public class ImageControllerTest {
+class ImageControllerTest {
 
     @MockBean
     private ImageController imageController;
@@ -44,12 +46,12 @@ public class ImageControllerTest {
                 "sky.jpeg",
                 "jpeg",
                 900_000_000_000L,
-                "hash",
+                generateRandomString(44),
                 ImageUtility.compressImage(new byte[]{1, 2, 3, 4}));
     }
 
     @Test
-    public void whenUploadingImageThenReturnResponse() throws Exception {
+    void whenUploadingImageThenReturnResponse() throws Exception {
         final MockMultipartFile imageFile = new MockMultipartFile("image", new byte[]{127});
 
         final ResponseEntity<ImageResponse> imageResponse = ResponseEntity
@@ -68,7 +70,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void whenUploadingDuplicateImageThenReturnImageErrorResponse() throws Exception {
+    void whenUploadingDuplicateImageThenReturnImageErrorResponse() throws Exception {
         final MockMultipartFile imageFile = new MockMultipartFile("image", new byte[]{127});
 
         when(imageController.uploadImage(imageFile)).thenThrow(new DuplicateImageException());
@@ -84,7 +86,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void givenImageGetImageDetails() throws Exception {
+    void givenImageGetImageDetails() throws Exception {
         given(imageController.getImageDetails("sky.jpeg"))
                 .willReturn(ResponseEntity.ok().body(image));
 
@@ -102,7 +104,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void givenImageDetailsNotFoundThenReturnImageErrorResponse() throws Exception {
+    void givenImageDetailsNotFoundThenReturnImageErrorResponse() throws Exception {
         given(imageController.getImageDetails("not-found.jpeg"))
                 .willThrow(new ImageRepositoryException());
 
@@ -116,7 +118,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void givenImageThenReturnImage() throws Exception {
+    void givenImageThenReturnImage() throws Exception {
         final ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(ImageUtility.decompressImage(image.getPhoto()));
@@ -133,7 +135,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void givenImageNotFoundThenReturnImageErrorResponse() throws Exception {
+    void givenImageNotFoundThenReturnImageErrorResponse() throws Exception {
         given(imageController.getImage("not-found.jpeg"))
                 .willThrow(new ImageRepositoryException());
 
@@ -147,7 +149,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void givenImageByNameDeleteImageAndReturn() throws Exception {
+    void givenImageByNameDeleteImageAndReturn() throws Exception {
         final ResponseEntity<ImageResponse> responseEntity = ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ImageResponse("Image " + image.getName() + " deleted successfully"));
@@ -165,7 +167,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void givenImageByNameNotFoundReturnImageErrorResponse() throws Exception {
+    void givenImageByNameNotFoundReturnImageErrorResponse() throws Exception {
         given(imageController.deleteImage("not-found.jpeg"))
                 .willThrow(new ImageRepositoryException());
 
@@ -176,6 +178,13 @@ public class ImageControllerTest {
                 .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    private static String generateRandomString(int length) {
+        return new SecureRandom().ints(length, 33, 127)
+                .mapToObj(i -> (char) i)
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 
 }

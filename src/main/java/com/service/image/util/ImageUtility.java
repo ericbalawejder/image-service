@@ -9,6 +9,10 @@ import java.util.zip.Inflater;
 
 public class ImageUtility {
 
+    private ImageUtility() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static byte[] compressImage(byte[] data) {
         final Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);

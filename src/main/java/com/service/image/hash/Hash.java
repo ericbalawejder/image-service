@@ -13,6 +13,10 @@ public class Hash {
     // https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
     private static final String HASHING_ALGORITHM = "SHA-256";
 
+    private Hash() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static String encodeFileBase64(MultipartFile multipartFile) throws NoSuchAlgorithmException {
         final MessageDigest messageDigest = MessageDigest.getInstance(HASHING_ALGORITHM);
         try (InputStream inputStream = multipartFile.getInputStream()) {

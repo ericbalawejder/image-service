@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: library/mysql:latest
+    container_name: image-service-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root-password
+      MYSQL_DATABASE: image-service
+      MYSQL_USER: image-service
+      MYSQL_PASSWORD: image-service
+    restart: always
+    # Relocate data-volume
+    volumes:
+      - mysql-data-volume:/var/lib/mysql:rw
+      #- ./data-volume:/var/lib/mysql
+
+  springboot-backend:
+    build: ./
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - mysql
+    links:
+      - mysql:mysql
+    restart: always
+    container_name: image-service-container
+
+volumes:
+  mysql-data-volume:

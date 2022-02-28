@@ -39,7 +39,7 @@ public class ImageController {
         final Image image = new Image(multipartFile.getOriginalFilename(),
                 multipartFile.getContentType(),
                 multipartFile.getSize(),
-                Hash.encodeFileBase64(multipartFile),
+                Hash.encodeBytesBase64(multipartFile),
                 ImageUtility.compressImage(multipartFile.getBytes()));
 
         try {

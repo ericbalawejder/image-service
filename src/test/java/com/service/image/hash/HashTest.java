@@ -30,7 +30,7 @@ class HashTest {
 
         final String expected = "nRMQbr5Wxcaba2oBS0zOyvl2sGedxUOkiS3gg+27Uj4=";
 
-        final String actual = Hash.encodeFileBase64(imageFile);
+        final String actual = Hash.encodeBytesBase64(imageFile);
 
         assertEquals(expected, actual);
     }

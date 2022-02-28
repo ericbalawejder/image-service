@@ -17,7 +17,7 @@ public class Hash {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String encodeFileBase64(MultipartFile multipartFile) throws NoSuchAlgorithmException {
+    public static String encodeBytesBase64(MultipartFile multipartFile) throws NoSuchAlgorithmException {
         final MessageDigest messageDigest = MessageDigest.getInstance(HASHING_ALGORITHM);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             final byte[] bytes = new byte[1024];

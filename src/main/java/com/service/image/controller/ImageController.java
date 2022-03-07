@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
@@ -48,9 +49,10 @@ public class ImageController {
             throw new DuplicateImageException();
         }
         final ImageResponse imageResponse = new ImageResponse(
-                "Image " + multipartFile.getOriginalFilename() + " uploaded successfully");
+                "Image uploaded successfully: " + multipartFile.getOriginalFilename());
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+                .created(URI.create("/upload/image/" + multipartFile.getOriginalFilename()))
                 .body(imageResponse);
     }
 

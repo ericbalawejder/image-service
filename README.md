@@ -13,7 +13,7 @@
 ```
 $ docker-compose up
 ```
-
+#### Local development
 To run locally, the datasource in the `application.properties` needs to point to your local mysql database.
 `spring.datasource.url=jdbc:mysql://localhost:3306/image-service?createDatabaseIfNotExist=...`
 

@@ -1,3 +1,6 @@
+# Ignore log file
+logs
+
 HELP.md
 .gradle
 build/

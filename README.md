@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/ericbalawejder/image-service.svg?style=svg)](https://circleci.com/gh/ericbalawejder/image-service)
+
 ## image-service
 * Upload an image to the endpoint `/upload/image`
 * Calculate the SHA256 hash of the image.
@@ -16,11 +18,15 @@ To run locally, the datasource in the `application.properties` needs to point to
 `spring.datasource.url=jdbc:mysql://localhost:3306/image-service?createDatabaseIfNotExist=...`
 
 ```
-$ ./gradlew clean build -x test
+$ ./gradlew clean assemble
 $ ./gradlew bootRun
 ```
 
 To run the tests:
+```
+$ ./gradlew clean build
+```
+or
 ```
 $ ./gradlew test
 ```

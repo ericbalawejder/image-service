@@ -19,7 +19,7 @@ public class ImageExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ImageErrorResponse> handleImageRepositoryException(ImageRepositoryException exc) {
         final ImageErrorResponse error = new ImageErrorResponse(
-                HttpStatus.BAD_REQUEST, exc.getMessage(), System.currentTimeMillis());
+                HttpStatus.NOT_FOUND, exc.getMessage(), System.currentTimeMillis());
 
         return new ResponseEntity<>(error, error.httpStatus());
     }

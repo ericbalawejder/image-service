@@ -62,7 +62,7 @@ class ImageControllerTest {
 
         when(imageController.uploadImage(imageFile)).thenReturn(imageResponse);
 
-        final MvcResult mvcResult = mockMvc.perform(multipart("/upload/image")
+        final MvcResult mvcResult = mockMvc.perform(multipart("/photobin/upload/image")
                         .file(imageFile)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -77,7 +77,7 @@ class ImageControllerTest {
 
         when(imageController.uploadImage(imageFile)).thenThrow(new DuplicateImageException());
 
-        final MvcResult mvcResult = mockMvc.perform(multipart("/upload/image")
+        final MvcResult mvcResult = mockMvc.perform(multipart("/photobin/upload/image")
                         .file(imageFile)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -92,7 +92,7 @@ class ImageControllerTest {
         given(imageController.getImageDetails("sky.jpeg"))
                 .willReturn(ResponseEntity.ok().body(image));
 
-        final MvcResult mvcResult = mockMvc.perform(get("/get/image/info/" + image.getName()))
+        final MvcResult mvcResult = mockMvc.perform(get("/photobin/get/image/info/" + image.getName()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", Is.is(image.getId())))
@@ -110,7 +110,7 @@ class ImageControllerTest {
         given(imageController.getImageDetails("not-found.jpeg"))
                 .willThrow(new ImageRepositoryException());
 
-        final MvcResult mvcResult = mockMvc.perform(get("/get/image/info/not-found.jpeg"))
+        final MvcResult mvcResult = mockMvc.perform(get("/photobin/get/image/info/not-found.jpeg"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message", Is.is("file name not found")))
@@ -127,7 +127,7 @@ class ImageControllerTest {
 
         given(imageController.getImage("sky.jpeg")).willReturn(responseEntity);
 
-        final MvcResult mvcResult = mockMvc.perform(get("/get/image/" + image.getName()))
+        final MvcResult mvcResult = mockMvc.perform(get("/photobin/get/image/" + image.getName()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_JPEG))
                 .andExpect(content().bytes(ImageUtility.decompressImage(image.getPhoto())))
@@ -141,7 +141,7 @@ class ImageControllerTest {
         given(imageController.getImage("not-found.jpeg"))
                 .willThrow(new ImageRepositoryException());
 
-        final MvcResult mvcResult = mockMvc.perform(get("/get/image/not-found.jpeg"))
+        final MvcResult mvcResult = mockMvc.perform(get("/photobin/get/image/not-found.jpeg"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message", Is.is("file name not found")))
@@ -158,7 +158,7 @@ class ImageControllerTest {
 
         given(imageController.deleteImage("sky.jpeg")).willReturn(responseEntity);
 
-        final MvcResult mvcResult = mockMvc.perform(delete("/delete/image/" + image.getName()))
+        final MvcResult mvcResult = mockMvc.perform(delete("/photobin/delete/image/" + image.getName()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.response",
@@ -173,7 +173,7 @@ class ImageControllerTest {
         given(imageController.deleteImage("not-found.jpeg"))
                 .willThrow(new ImageRepositoryException());
 
-        final MvcResult mvcResult = mockMvc.perform(delete("/delete/image/not-found.jpeg"))
+        final MvcResult mvcResult = mockMvc.perform(delete("/photobin/delete/image/not-found.jpeg"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message", Is.is("file name not found")))
